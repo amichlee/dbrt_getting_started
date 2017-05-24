@@ -80,46 +80,46 @@ joint_transition:
   #
   # these parameters also serve as switches, determining which joints have to be corrected
   # using visual estimates. if the value is 0 for a given joint, then the bias is always 0,
-  # and our estimate will simply be the joint angle measurement. here for instance, we only
-  # correct the right wrist joint (R_WAA), because all other joints have negligible biases.
+  # and our estimate will simply be the joint angle measurement. here for instance, we do not 
+  # correct the left arm and hand, because they are not being used, and we do not correct the 
+  # eyes, because they are irrelevant. furthermore, we do not correct right hand here, 
+  # because we might not care so much about precision in the hand, or we might simply trust
+  # the joint encoders of the hand enough, such that no correction is necessary.
   bias_factors: [
-    # neck     # eyes     # left arm  # right arm       # left hand  # right hand
-    B_HN: 0.,  L_EP: 0.,  L_SFE: 0.,  R_SFE: 0.,        L_FR:  0.,   R_FR:  0., 
-    B_HT: 0.,  L_ET: 0.,  L_SAA: 0.,  R_SAA: 0.,        L_LF:  0.,   R_LF:  0., 
-    B_HR: 0.,  R_EP: 0.,  L_HR:  0.,  R_HR:  0.,        L_LF2: 0.,   R_LF2: 0., 
-               R_ET: 0.,  L_EB:  0.,  R_EB:  0.,        L_FR2: 0.,   R_FR2: 0., 
-                          L_WR:  0.,  R_WR:  0.,        L_RF:  0.,   R_RF:  0., 
-                          L_WFE: 0.,  R_WFE: 0.,        L_RF2: 0.,   R_RF2: 0., 
-                          L_WAA: 0.,  R_WAA: 0.993092,  L_MF:  0.,   R_MF:  0., 
-                                                        L_MF2: 0.,   R_MF2: 0. ]
+    # neck           # eyes     # left arm  # right arm       # left hand  # right hand
+    B_HN: 0.993092,  L_EP: 0.,  L_SFE: 0.,  R_SFE: 0.993092,  L_FR:  0.,   R_FR:  0., 
+    B_HT: 0.993092,  L_ET: 0.,  L_SAA: 0.,  R_SAA: 0.993092,  L_LF:  0.,   R_LF:  0., 
+    B_HR: 0.993092,  R_EP: 0.,  L_HR:  0.,  R_HR:  0.993092,  L_LF2: 0.,   R_LF2: 0., 
+                     R_ET: 0.,  L_EB:  0.,  R_EB:  0.993092,  L_FR2: 0.,   R_FR2: 0., 
+                                L_WR:  0.,  R_WR:  0.993092,  L_RF:  0.,   R_RF:  0., 
+                                L_WFE: 0.,  R_WFE: 0.993092,  L_RF2: 0.,   R_RF2: 0., 
+                                L_WAA: 0.,  R_WAA: 0.993092,  L_MF:  0.,   R_MF:  0., 
+                                                              L_MF2: 0.,   R_MF2: 0. ]                                                      
 
 # below we specify the sampling blocks of the coordinate particle filter [3].
 # it is advisable to not sample all dimensions at once, because this is too high
 # dimensional. ideally we assign the joints to blocks, such that very related
 # joints are in the same block, see below for an example. the block names are 
 # just for readability, you can assign any name you like.
-
-# sampling_blocks:
-#   - neck:       [ B_HN, B_HT, B_HR ]
-#   - eyes:       [ L_EP, L_ET, R_EP, R_ET ]
-#   - left_arm:   [ L_SFE, L_SAA, L_HR, L_EB, L_WR, L_WFE, L_WAA ]
-#   - right_arm:  [ R_SFE, R_SAA, R_HR, R_EB, R_WR, R_WFE, R_WAA ]
-#   - left_hand:  [ L_FR, L_LF, L_LF2, L_FR2, L_RF, L_RF2, L_MF, L_MF2 ]
-#   - right_hand: [ R_FR, R_LF, R_LF2, R_FR2, R_RF, R_RF2, R_MF, R_MF2 ]
-
 sampling_blocks:
-  - robot: [
-        B_HN,  B_HT,  B_HR,                                    # neck
-        L_EP,  L_ET,  R_EP,  R_ET,                             # eyes
-        L_SFE, L_SAA, L_HR,  L_EB,  L_WR, L_WFE, L_WAA,        # left arm
-        R_SFE, R_SAA, R_HR,  R_EB,  R_WR, R_WFE, R_WAA,        # right arm
-        L_FR,  L_LF,  L_LF2, L_FR2, L_RF, L_RF2, L_MF, L_MF2,  # left hand
-        R_FR,  R_LF,  R_LF2, R_FR2, R_RF, R_RF2, R_MF, R_MF2   # right hand
-    ]
+  - right_upper_arm: [ R_SFE, R_SAA, R_HR, R_EB ]
+  - right_lower_arm: [ R_WR, R_WFE, R_WAA ]
+  - neck:            [ B_HN, B_HT, B_HR ]                                    # neck
+  - not_corrected:   [ L_EP, L_ET, R_EP, R_ET,                               # eyes
+                       L_SFE, L_SAA, L_HR, L_EB, L_WR, L_WFE, L_WAA,         # left arm
+                       L_FR, L_LF, L_LF2, L_FR2, L_RF, L_RF2, L_MF, L_MF2,   # left hand
+                       R_FR, R_LF, R_LF2, R_FR2, R_RF, R_RF2, R_MF, R_MF2 ]  # right hand
 
-# Camera offset specific parameters
+# you can estimate an offset between the nominal camera pose in the kinematic model, 
+# and the true camera pose. this allows for precise hand-eye coordination even if 
+# the kinematic model has some inaccuracies. the way we do this is by automatically
+# inserting 6 virtual joints between the nominal and the true camera, and then 
+# estimating the biases in the same way as for the other joints. so the 
+# paramters below follow the same logic as the parameters above and will 
+# not be explained again.
 camera_offset:
-  # Turn on or off camera offset estimation
+  # turn on or off camera offset estimation. the following parameters are only
+  # relevant if this is set to true.
   estimate_camera_offset: true 
 
   joint_observation:
@@ -128,7 +128,6 @@ camera_offset:
       PITCH_JOINT: 0.0, YAW_JOINT: 0.0, ROLL_JOINT: 0.0
     ]
 
-  # Joint transition function parameters
   joint_transition: 
     joint_sigmas: [
       X_JOINT:     100., Y_JOINT:   100., Z_JOINT:    100.,
@@ -143,9 +142,11 @@ camera_offset:
       PITCH_JOINT: 0.993092, YAW_JOINT: 0.993092, ROLL_JOINT: 0.993092
     ]
 
-  # here we add the camera_offset sampling to the head
+  # we also have to specify to which sampling block these virtual joints are added.
+  # you can either define a new sampling blocks, as we do here, or add them to
+  # an existing sampling block from above, by using an existing name.
   sampling_blocks:
-    - robot: [
+    - camera_offset: [
         X_JOINT, Y_JOINT, Z_JOINT,
         PITCH_JOINT, YAW_JOINT, ROLL_JOINT]
 
@@ -173,9 +174,9 @@ gpu:
   # optional (values: none | /path/to/shader)
   geometry_shader_file: none
 
-  # if desired, exponential smoothing can be performed on the output
-  # of the filter. [1.0: no smoothing, 0.0: maximal smoothing]
-  moving_average_update_rate: 1.0
+# if desired, exponential smoothing can be performed on the output
+# of the filter. [1.0: no smoothing, 0.0: maximal smoothing]
+moving_average_update_rate: 1.0
 
 # particles will only be resampled if their weights are very concentrated.
 # this parameter is a measure of this concentration. 
