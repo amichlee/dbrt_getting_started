@@ -1,0 +1,57 @@
+
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#slider"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:property name="homeDirectory" value="package://apollo_robot_model" />
+    <xacro:property name="PI" value="3.1415926535897931" />
+
+<!-- offsets from Kuka joint convention to SL  -->
+
+    <xacro:property name="SFE_offset" value="0.0" />
+    <xacro:property name="SAA_offset" value="-1.5707" />
+    <xacro:property name="HR_offset" value="1.0472" />
+    <xacro:property name="EB_offset" value="0.0" />
+    <xacro:property name="WR_offset" value="-1.5707" />
+    <xacro:property name="WFE_offset" value="0.0" />
+    <xacro:property name="WAA_offset" value="0.0" />
+    
+    <!-- joint limits of both arms -->
+    <xacro:property name="SFE_min" value="-2.96" />
+    <xacro:property name="SAA_min" value="-3.1" />
+    <xacro:property name="HR_min" value="-1.9" />
+    <xacro:property name="EB_min" value="-2.09" />
+    <xacro:property name="WR_min" value="-3.1" />
+    <xacro:property name="WFE_min" value="-2.09" />
+    <xacro:property name="WAA_min" value="-2.96" />
+    
+    <xacro:property name="SFE_max" value="2.96" />
+    <xacro:property name="SAA_max" value="-0.1" />
+    <xacro:property name="HR_max" value="4.0" />
+    <xacro:property name="EB_max" value="2.09" />
+    <xacro:property name="WR_max" value="1.35" />
+    <xacro:property name="WFE_max" value="2.09" />
+    <xacro:property name="WAA_max" value="2.96" />
+
+
+    <!-- joint limits for the neck and eyes-->
+    <xacro:property name="B_HN_min" value="-0.522812" />
+    <xacro:property name="B_HT_min" value="-0.283485" />
+    <xacro:property name="B_HR_min" value="-0.98000" />
+    <xacro:property name="R_EP_min" value="-0.547836" />
+    <xacro:property name="R_ET_min" value="-0.584609" />
+    <xacro:property name="L_EP_min" value="-0.557414" />
+    <xacro:property name="L_ET_min" value="-0.574821" />
+    
+    <xacro:property name="B_HN_max" value="0.525297" />
+    <xacro:property name="B_HT_max" value="0.342839" />
+    <xacro:property name="B_HR_max" value="0.980000" />
+    <xacro:property name="R_EP_max" value="0.677454" />
+    <xacro:property name="R_ET_max" value="0.667224" />
+    <xacro:property name="L_EP_max" value="0.697715" />
+    <xacro:property name="L_ET_max" value="0.626982" />
+
+</robot>

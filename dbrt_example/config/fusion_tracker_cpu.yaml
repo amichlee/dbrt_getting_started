@@ -1,0 +1,146 @@
+robot_description_name: robot_description
+rendering_root_left: L_SHOULDER
+rendering_root_right: R_SHOULDER
+#tf_connecting_frame: R_PALM
+tf_connecting_frame: XTION_RGB
+
+camera_delay: 0.033
+
+use_gpu: false
+
+cpu:
+  sample_count: 100
+
+gpu:
+  sample_count: 200
+
+  # set true to use custom shader definitions file defined below
+  # if set to false, the default shader will be used
+  use_custom_shaders: false
+  
+  vertex_shader_file: /path/to/custom/vertex_shader.vertexshader
+  fragment_shader_file: /path/to/custom/fragment_shader.fragmentshader
+
+  # optional (values: none | /path/to/shader)
+  geometry_shader_file: none
+
+# State moving average update rate in [0.0; 1.0]
+#   1: unfiltered wiggly estimates.
+#   0: constant
+moving_average_update_rate: 1.0
+  
+max_kl_divergence: 2.0
+  
+
+# particle filter settings
+observation:
+  occlusion:
+    initial_occlusion_prob: 0.25  # stationary value
+    p_occluded_visible: 0.1
+    p_occluded_occluded: 0.7
+  kinect:
+    tail_weight: 0.01
+    model_sigma: 0.003
+    sigma_factor: 0.0
+  delta_time: 0.033
+
+joint_observation:
+  joint_sigmas: [
+    # neck     # eyes     # left arm  # right arm  # left hand  # right hand
+    B_HN: 0.,  L_EP: 0.,  L_SFE: 0.,  R_SFE: 0.,   L_FR:  0.,   R_FR:  0., 
+    B_HT: 0.,  L_ET: 0.,  L_SAA: 0.,  R_SAA: 0.,   L_LF:  0.,   R_LF:  0., 
+    B_HR: 0.,  R_EP: 0.,  L_HR:  0.,  R_HR:  0.,   L_LF2: 0.,   R_LF2: 0., 
+               R_ET: 0.,  L_EB:  0.,  R_EB:  0.,   L_FR2: 0.,   R_FR2: 0., 
+                          L_WR:  0.,  R_WR:  0.,   L_RF:  0.,   R_RF:  0., 
+                          L_WFE: 0.,  R_WFE: 0.,   L_RF2: 0.,   R_RF2: 0., 
+                          L_WAA: 0.,  R_WAA: 0.,   L_MF:  0.,   R_MF:  0., 
+                                                   L_MF2: 0.,   R_MF2: 0. ]
+
+
+joint_transition: 
+  joint_sigmas: [ 
+    # neck       # eyes       # left arm    # right arm    # left hand    # right hand
+    B_HN: 100.,  L_EP: 100.,  L_SFE: 100.,  R_SFE: 100.,   L_FR:  100.,   R_FR:  100., 
+    B_HT: 100.,  L_ET: 100.,  L_SAA: 100.,  R_SAA: 100.,   L_LF:  100.,   R_LF:  100., 
+    B_HR: 100.,  R_EP: 100.,  L_HR:  100.,  R_HR:  100.,   L_LF2: 100.,   R_LF2: 100., 
+                 R_ET: 100.,  L_EB:  100.,  R_EB:  100.,   L_FR2: 100.,   R_FR2: 100., 
+                              L_WR:  100.,  R_WR:  100.,   L_RF:  100.,   R_RF:  100., 
+                              L_WFE: 100.,  R_WFE: 100.,   L_RF2: 100.,   R_RF2: 100., 
+                              L_WAA: 100.,  R_WAA: 100.,   L_MF:  100.,   R_MF:  100., 
+                                                           L_MF2: 100.,   R_MF2: 100. ]
+
+  bias_sigmas: [
+    # neck         # eyes         # left arm      # right arm      # left hand      # right hand
+    B_HN: 0.0005,  L_EP: 0.0005,  L_SFE: 0.0005,  R_SFE: 0.0005,   L_FR:  0.0005,   R_FR:  0.0005, 
+    B_HT: 0.0005,  L_ET: 0.0005,  L_SAA: 0.0005,  R_SAA: 0.0005,   L_LF:  0.0005,   R_LF:  0.0005, 
+    B_HR: 0.0005,  R_EP: 0.0005,  L_HR:  0.0005,  R_HR:  0.0005,   L_LF2: 0.0005,   R_LF2: 0.0005, 
+                   R_ET: 0.0005,  L_EB:  0.0005,  R_EB:  0.0005,   L_FR2: 0.0005,   R_FR2: 0.0005, 
+                                  L_WR:  0.0005,  R_WR:  0.0005,   L_RF:  0.0005,   R_RF:  0.0005, 
+                                  L_WFE: 0.0005,  R_WFE: 0.0005,   L_RF2: 0.0005,   R_RF2: 0.0005, 
+                                  L_WAA: 0.0005,  R_WAA: 0.0005,   L_MF:  0.0005,   R_MF:  0.0005, 
+                                                                   L_MF2: 0.0005,   R_MF2: 0.0005 ]
+  
+  # Turn on (i.e. make != 0) for the joints we want to track
+  # For dt=1/100 and c=0.5 -> factor:=c^dt=0.993092
+  bias_factors: [
+    # neck     # eyes     # left arm  # right arm       # left hand  # right hand
+    B_HN: 0.,  L_EP: 0.,  L_SFE: 0.,  R_SFE: 0.,        L_FR:  0.,   R_FR:  0., 
+    B_HT: 0.,  L_ET: 0.,  L_SAA: 0.,  R_SAA: 0.,        L_LF:  0.,   R_LF:  0., 
+    B_HR: 0.,  R_EP: 0.,  L_HR:  0.,  R_HR:  0.,        L_LF2: 0.,   R_LF2: 0., 
+               R_ET: 0.,  L_EB:  0.,  R_EB:  0.,        L_FR2: 0.,   R_FR2: 0., 
+                          L_WR:  0.,  R_WR:  0.,        L_RF:  0.,   R_RF:  0., 
+                          L_WFE: 0.,  R_WFE: 0.,        L_RF2: 0.,   R_RF2: 0., 
+                          L_WAA: 0.,  R_WAA: 0.993092,  L_MF:  0.,   R_MF:  0., 
+                                                        L_MF2: 0.,   R_MF2: 0. ]
+    
+# sampling_blocks:
+#   - neck:       [ B_HN, B_HT, B_HR ]
+#   - eyes:       [ L_EP, L_ET, R_EP, R_ET ]
+#   - left_arm:   [ L_SFE, L_SAA, L_HR, L_EB, L_WR, L_WFE, L_WAA ]
+#   - right_arm:  [ R_SFE, R_SAA, R_HR, R_EB, R_WR, R_WFE, R_WAA ]
+#   - left_hand:  [ L_FR, L_LF, L_LF2, L_FR2, L_RF, L_RF2, L_MF, L_MF2 ]
+#   - right_hand: [ R_FR, R_LF, R_LF2, R_FR2, R_RF, R_RF2, R_MF, R_MF2 ]
+
+sampling_blocks:
+  - robot: [
+        B_HN,  B_HT,  B_HR,                                    # neck
+        L_EP,  L_ET,  R_EP,  R_ET,                             # eyes
+        L_SFE, L_SAA, L_HR,  L_EB,  L_WR, L_WFE, L_WAA,        # left arm
+        R_SFE, R_SAA, R_HR,  R_EB,  R_WR, R_WFE, R_WAA,        # right arm
+        L_FR,  L_LF,  L_LF2, L_FR2, L_RF, L_RF2, L_MF, L_MF2,  # left hand
+        R_FR,  R_LF,  R_LF2, R_FR2, R_RF, R_RF2, R_MF, R_MF2   # right hand
+    ]
+
+# Camera offset specific parameters
+camera_offset:
+  # Turn on or off camera offset estimation
+  estimate_camera_offset: true 
+
+  joint_observation:
+    joint_sigmas: [
+      X_JOINT:     0.0, Y_JOINT:   0.0, Z_JOINT:    0.0,
+      PITCH_JOINT: 0.0, YAW_JOINT: 0.0, ROLL_JOINT: 0.0
+    ]
+
+  # Joint transition function parameters
+  joint_transition: 
+    joint_sigmas: [
+      X_JOINT:     100., Y_JOINT:   100., Z_JOINT:    100.,
+      PITCH_JOINT: 100., YAW_JOINT: 100., ROLL_JOINT: 100.
+    ]
+    bias_sigmas:  [
+      X_JOINT:     0.0005, Y_JOINT:   0.0005, Z_JOINT:    0.0005,
+      PITCH_JOINT: 0.0005, YAW_JOINT: 0.0005, ROLL_JOINT: 0.0005
+    ]
+    bias_factors: [
+      X_JOINT:     0.993092, Y_JOINT:   0.993092, Z_JOINT:    0.993092,
+      PITCH_JOINT: 0.993092, YAW_JOINT: 0.993092, ROLL_JOINT: 0.993092
+    ]
+
+  # here we add the camera_offset sampling to the head
+  sampling_blocks:
+    - robot: [
+        X_JOINT, Y_JOINT, Z_JOINT,
+        PITCH_JOINT, YAW_JOINT, ROLL_JOINT]
+      
+    

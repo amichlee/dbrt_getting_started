@@ -1,0 +1,342 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find apollo_robot_model)/models/common.urdf.xacro"/>
+  <xacro:include filename="$(find apollo_robot_model)/models/sensorsValues.urdf.xacro"/>
+  
+  <xacro:macro name="head" params="parent *origin">
+
+    <!-- joint between {parent} and motor box-->
+    <joint name="B_STAND_MOTORS" type="fixed" >
+      <!--origin xyz="0 0.15 -0.25" rpy="0 0 0"/-->
+      <origin xyz="0 0.22225 -0.25" rpy="0 0 0"/>
+      <parent link="${parent}" />
+      <child link="B_MOTORS" />
+    </joint>
+
+    <!-- Links for head motors-->
+    <link name="B_MOTORS">
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0.0 0.0 -0.06" rpy="0 0 0"/>
+	<geometry>
+	  <box size="0.2 0.15 0.12 "/>
+	</geometry>
+      </visual>
+      <collision>
+	<origin xyz="0.0 0.0 -0.06" rpy="0 0 0"/>
+	<geometry>
+	  <box size="0.2 0.15 0.12 "/>
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between motor box and neck joints-->
+    <joint name="B_MOTORS_neck" type="fixed" >
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="B_MOTORS" />
+      <child link="B_CERVICALS" />
+    </joint>
+    
+        <!-- Links for cervicals-->
+    <link name="B_CERVICALS">
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 ${(0.0762+0.3175)/2.0}" rpy="0 0 0"/>
+	<geometry>
+	  <cylinder length="${0.0762+0.3175}" radius="0.03"/>
+	</geometry>
+      </visual>
+      <collision>
+	<origin xyz="0 0 ${(0.0762+0.3175)/2.0}" rpy="0 0 0"/>
+	<geometry>
+	  <cylinder length="${0.0762+0.3175}" radius="0.03"/>
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between {parent} and head cervical 1-->
+    <joint name="B_NECK" type="fixed" >
+      <insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="B_NECK" />
+    </joint>
+
+    <link name="B_NECK"/>
+
+    <joint name="B_HN" type="revolute" >
+      <parent link="B_NECK" />
+      <child link="B_CERVICAL1" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${B_HN_min}" upper="${B_HN_max}"/>
+    </joint>
+
+    <link name="B_CERVICAL1"/>
+    
+    <!-- joint between head cervical 1 and head cervical 2-->
+    <joint name="B_HT" type="revolute" >
+      <parent link="B_CERVICAL1" />
+      <child link="B_CERVICAL2" />
+      <origin xyz="0 0 0" rpy="0 ${PI/2.0} 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${B_HT_min}" upper="${B_HT_max}"/>
+    </joint>
+
+    <link name="B_CERVICAL2"/>
+
+    <!-- joint between head cervical 1 and head cervical 2-->
+    <joint name="B_HR" type="revolute" >
+      <parent link="B_CERVICAL2" />
+      <child link="B_HEAD" />
+      <origin xyz="0 0 0" rpy="-${PI/2.0} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${B_HR_min}" upper="${B_HR_max}"/>
+    </joint>
+
+    <link name="B_HEAD">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="-0.035 -${-0.055+.12} -0.08" rpy="-${PI/2.0} 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/humanoidHead.stl" />
+	</geometry>
+      </visual>
+      <collision>
+	<origin xyz="-0.035 -${-0.055+.12} -0.08" rpy="-${PI/2.0} 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/humanoidHead_smpl.stl" />
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between head and right eye-->
+
+    <joint name="R_EP" type="revolute" >
+      <parent link="B_HEAD" />
+      <child link="R_PAN_UNIT" />
+      <origin xyz="0.0366 -0.0674 -0.1356" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${R_EP_min}" upper="${R_EP_max}"/>
+    </joint>
+    
+    <link name="R_PAN_UNIT"/>
+
+    <!-- joint between head and right eye-->
+    <joint name="R_ET" type="revolute" >
+      <parent link="R_PAN_UNIT" />
+      <child link="R_EYE" />
+      <origin xyz="0 0 0" rpy="0 -${PI/2.0} 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${R_ET_min}" upper="${R_ET_max}"/>
+    </joint>
+
+    <link name="R_EYE">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0.0545 0 0.072" rpy="0 ${PI/2.0} ${PI/2.0}"/>
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/humanoidHeadRightEye.stl" />
+	</geometry>
+      </visual>
+      <!--
+      <collision>
+	<origin xyz="0.0545 0 0.072" rpy="0 ${PI/2.0} ${PI/2.0}"/>
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/humanoidHeadRightEye.stl" />
+	</geometry>
+      </collision>
+      -->
+    </link>
+
+    <!-- joint between right eye and upper camera-->
+    <joint name="R_E_UPPER" type="fixed" >
+      <parent link="R_EYE" />
+      <child link="R_EYE_UPPER" />
+      <origin xyz="0 ${-.022 -0.001} 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Cameras in right eye-->
+    <link name="R_EYE_UPPER">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0" rpy="0 ${PI/2.0} ${PI/2.0}"/>
+	<geometry>
+	  <cylinder length="0.001" radius="0.007"/>
+	</geometry>
+      </visual>
+    </link>
+
+
+    <!-- joint between right eye and lower camera-->
+    <joint name="R_E_LOWER" type="fixed" >
+      <parent link="R_EYE" />
+      <child link="R_EYE_LOWER" />
+      <origin xyz="0.017 ${-.022 +0.001} 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Cameras in right eye-->
+    <link name="R_EYE_LOWER">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0" rpy="0 ${PI/2.0} ${PI/2.0}"/>
+	<geometry>
+	  <cylinder length="0.01" radius="0.006"/>
+	</geometry>
+      </visual>
+    </link>
+
+
+    <!-- joint between head and right eye-->
+    <joint name="L_EP" type="revolute" >
+      <parent link="B_HEAD" />
+      <child link="L_PAN_UNIT" />
+      <origin xyz="-0.0366 -0.0674 -0.1356" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${L_EP_min}" upper="${L_EP_max}"/>
+    </joint>
+    
+    <link name="L_PAN_UNIT"/>
+
+    <!-- joint between head and right eye-->
+    <joint name="L_ET" type="revolute" >
+      <parent link="L_PAN_UNIT" />
+      <child link="L_EYE" />
+      <origin xyz="0 0 0" rpy="0 -${PI/2.0} 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${L_ET_min}" upper="${L_ET_max}"/>
+    </joint>
+
+    <link name="L_EYE">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0.0545 0 0.072" rpy="0 ${PI/2.0} ${PI/2.0}"/>
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/humanoidHeadRightEye.stl" />
+	</geometry>
+      </visual>
+      <!--
+      <collision>
+	<origin xyz="0.0545 0 0.072" rpy="0 ${PI/2.0} ${PI/2.0}"/>
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/humanoidHeadRightEye.stl" />
+	</geometry>
+      </collision>
+      -->
+    </link>
+
+
+    <!-- joint between left eye and upper camera-->
+    <joint name="L_E_UPPER" type="fixed" >
+      <parent link="L_EYE" />
+      <child link="L_EYE_UPPER" />
+      <origin xyz="0 ${-.022 -0.001} 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Cameras in left eye-->
+    <link name="L_EYE_UPPER">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0" rpy="0 ${PI/2.0} ${PI/2.0}"/>
+	<geometry>
+	  <cylinder length="0.001" radius="0.007"/>
+	</geometry>
+      </visual>
+    </link>
+
+
+    <!-- joint between left eye and lower camera-->
+    <joint name="L_E_LOWER" type="fixed" >
+      <parent link="L_EYE" />
+      <child link="L_EYE_LOWER" />
+      <origin xyz="0.017 ${-.022 + 0.001} 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Cameras in left eye-->
+    <link name="L_EYE_LOWER">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0" rpy="0 ${PI/2.0} ${PI/2.0}"/>
+	<geometry>
+	  <cylinder length="0.01" radius="0.006"/>
+	</geometry>
+      </visual>
+    </link>
+
+    <!-- XTION-->
+    <!-- joint between neck and xtion rgb camera-->
+    <!--joint name="XTION_LINK" type="fixed" >
+      <parent link="B_HEAD" />
+      <child link="XTION_RGB" />
+      <origin xyz="-0.02 -0.07 -0.205" rpy="1.134 0 0"/>
+    </joint-->
+
+    <joint name="XTION_JOINT" type="fixed">
+        <parent link="B_HEAD"/>
+        <child link="XTION_RGB"/>
+	<origin xyz="${XTIONFromNeckXYZ}" rpy="${XTIONFromNeckRPY}"/>
+    </joint>
+    
+    <link name="XTION_RGB">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<geometry>
+	  <cylinder length="0.01" radius="0.006"/>
+	</geometry>
+      </visual>
+    </link>
+
+  </xacro:macro>
+
+</robot>

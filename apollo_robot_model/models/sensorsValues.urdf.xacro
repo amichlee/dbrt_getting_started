@@ -1,0 +1,23 @@
+
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#slider"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+       xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+<!-- Manually measured position -->
+<!--xacro:property name="XTIONFromNeckXYZ" value="-0.019 -0.08762 -0.2067" /-->
+<!--xacro:property name="XTIONFromNeckRPY" value="1.134 0.0 0.0" /-->
+
+<!-- Almost the same transform from data collected August14th - allowing minimal table xyz optimization -->
+<xacro:property name="XTIONFromNeckXYZ" value="-0.008534 -0.102006 -0.206765" />
+<xacro:property name="XTIONFromNeckRPY" value="1.108260 -0.001908 -0.039256" />
+
+<!-- Best transform so far from data collected August14th - without even minimal table pose optimization -->
+<!-- xacro:property name="XTIONFromNeckXYZ" value="-0.008368 -0.102347 -0.207270" /-->
+<!-- xacro:property name="XTIONFromNeckRPY" value="1.108573 -0.001902 -0.039201" /-->
+
+
+</robot>

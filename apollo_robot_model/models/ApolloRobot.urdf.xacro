@@ -1,0 +1,65 @@
+<robot name="apollo_robot"
+       xmlns:xacro="http://www.ros.org/wiki/xacro"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller">
+  <xacro:arg name="material_color" />
+
+  <include filename="$(find apollo_robot_model)/models/common.urdf.xacro"/>
+  <include filename="$(find apollo_robot_model)/models/kuka.urdf.xacro"/>	
+  <include filename="$(find apollo_robot_model)/models/head.urdf.xacro"/>	
+
+
+  <material name="DarpaGrey">
+    <color rgba="$(arg material_color)" />
+  </material>
+
+  <material name="DarpaBlue">
+    <color rgba="0.0 0.5 0.5 1.0"/>
+  </material>
+
+  <link name = "ORIG"/>
+  <link name = "BASE">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <material name="DarpaGrey" />
+      <origin xyz="0 0 -1.400" rpy="0 0 ${PI}" />
+      <geometry>
+	<mesh filename="package://apollo_robot_model/meshes/stand.stl"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -1.400" rpy="0 0 ${PI}" />
+      <geometry>
+	<mesh filename="package://apollo_robot_model/meshes/collision/stand.stl"/>	
+      </geometry>
+    </collision>
+  </link>
+  <xacro:gazeboReference name="BASE" material="PR2/Grey2" />
+  
+  <joint name="fixedJoint" type="fixed">
+    <parent link="ORIG"/>
+    <child link="BASE"/>
+    <!--origin xyz="0 0.2 1.305" rpy="0 0 ${PI}"/-->
+    <origin xyz="0 0 1.400" rpy="0 0 ${PI}"/>
+  </joint>
+
+  <!-- Adding Left and Right arm -->
+  <xacro:lbr4 side="L" parent="BASE" reflect="1" lrOffset="0">
+    <origin xyz="0 0 0" rpy="0 0 ${PI/3.0}" />
+  </xacro:lbr4>
+
+  <xacro:lbr4 side="R" parent="BASE" reflect="-1" lrOffset="1">
+    <origin xyz="0 0 0" rpy="0 ${PI} -${PI/3.0}" />
+  </xacro:lbr4>
+
+  <!-- Adding Apollo's Head-->
+  <xacro:head parent="BASE">
+    <!--origin xyz="0.0 0.15 ${0.3175+0.0762-0.25}" rpy="-${PI/2.0} 0 ${PI/2.0}" /-->
+    <origin xyz="0.0 0.22225 0.182" rpy="-${PI/2.0} 0 ${PI/2.0}" />
+  </xacro:head>
+
+
+</robot>

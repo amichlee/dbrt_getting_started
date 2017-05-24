@@ -1,0 +1,5 @@
+<launch>
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find apollo_robot_model)/models/ApolloRobot.urdf.xacro" />
+	<rosparam command="load" ns="/robot_model" file="$(find apollo_robot_model)/config/apollo_robot_model.yaml" />
+	<include file="$(find robot_info)/launch/load_apollo_parameters.launch"/>
+</launch>

@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find apollo_robot_model)/models/common.urdf.xacro"/>
+  <xacro:include filename="$(find apollo_robot_model)/models/hand.urdf.xacro" />
+
+  <xacro:macro name="lbr4" params="parent side reflect *origin lrOffset">
+
+    <!-- joint between {parent} and arm_0_link -->
+    <joint name="${side}_${parent}" type="fixed" >
+      <insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${side}_COLLARBONE" />
+    </joint>
+
+    <link name="${side}_COLLARBONE">
+      <inertial>
+	<origin xyz="0 0.06813 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0.06813 0" rpy="0 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/lbr0.stl" />
+	</geometry>
+      </visual>
+      <collision>
+	<origin xyz="0 0.06813 0" rpy="0 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/lbr0_smpl.stl" />
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between arm_0_link and arm_1_link -->
+    <joint name="${side}_SFE" type="revolute">
+      <origin xyz="0 0.16813 0" rpy="-${PI/2.0} ${reflect*-SFE_offset} 0"/>
+      <!--origin xyz="0 0.16 0" rpy="-${PI/2.0} ${reflect*-SFE_offset} 0"/-->
+      <parent link="${side}_COLLARBONE"/>
+      <child link="${side}_SHOULDER"/>
+      <axis xyz="0 0 ${reflect*-1}"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${SFE_min}" upper="${SFE_max}"/>
+    </joint>
+
+    <link name="${side}_SHOULDER">
+      <inertial>
+	<origin xyz="0 0 0.018" rpy="0 0 0" />
+	<mass value="5.9907"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0.018" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/lbr1.stl" />
+	</geometry>
+      </visual>
+
+      <collision>
+	<origin xyz="0 0 0.018" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/lbr1_smpl.stl" />
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between arm_1_link and arm_2_link -->
+    <joint name="${side}_SAA" type="revolute">
+      <!--origin xyz="0 0 0.2" rpy="${PI/2.0} ${PI/2.0 - reflect*SAA_offset} ${PI/2.0}"/-->
+      <origin xyz="0 0 0.2105" rpy="${PI/2.0} ${PI/2.0 - reflect*SAA_offset} ${PI/2.0}"/>
+      <parent link="${side}_SHOULDER"/>
+      <child link="${side}_UPPER_ARM_IN_SHOULDER"/>
+      <axis xyz="0 0 ${reflect*-1}"/>
+      <dynamics damping="25" />
+      <limit effort="200" velocity="1.9634" lower="${SAA_min}" upper="${SAA_max}"/>
+    </joint>
+
+    <link name="${side}_UPPER_ARM_IN_SHOULDER">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="5.734939"/>
+	<inertia ixx="0.03" ixy="0" ixz="0" iyy="0.03" iyz="0" izz="0.03" />
+      </inertial>
+
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/lbr2.stl" />
+	</geometry>
+      </visual>
+
+      <collision>
+	<origin xyz="0 0 0" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/lbr2_smpl.stl"/>
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between arm_2_link and arm_3_link -->
+    <joint name="${side}_HR" type="revolute">
+      <origin xyz="-0.2 0 0" rpy="-${PI/2.0}  ${-PI/2.0+reflect*HR_offset} ${PI/2.0}"/>
+      <parent link="${side}_UPPER_ARM_IN_SHOULDER"/>
+      <child link="${side}_UPPER_ARM"/>
+      <axis xyz="0 0 ${reflect*-1}"/>
+      <dynamics damping="25" />
+      <limit effort="100" velocity="1.9634" lower="${HR_min}" upper="${HR_max}"/>
+    </joint>
+
+    <link name="${side}_UPPER_ARM">
+      <inertial>
+	<origin xyz="0 0 0.008" rpy="0 0 0"/>
+	<mass value="4.214668"/>
+	<inertia ixx="0.03" ixy="0" ixz="0" iyy="0.03" iyz="0" izz="0.03" />
+      </inertial>
+
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0.008" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/lbr3.stl" />
+	</geometry>
+      </visual>
+
+      <collision>
+	<origin xyz="0 0 0.008" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/lbr3_smpl.stl"/>
+	</geometry>
+      </collision>
+    </link> 
+
+    <!-- joint between arm_3_link and arm_4_link -->
+    <joint name="${side}_EB" type="revolute">
+      <origin xyz="0 0 0.2" rpy="-${PI/2.0} ${-PI/2.0-reflect*EB_offset} ${PI/2.0}" />
+      <parent link="${side}_UPPER_ARM"/>
+      <child link="${side}_FOREARM"/>
+      <axis xyz="0 0 ${reflect*-1}" />
+      <dynamics damping="25" />
+      <limit effort="100" velocity="1.9634" lower="${EB_min}" upper="${EB_max}" />
+    </joint>
+
+    <link name="${side}_FOREARM">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="3.669819"/>
+	<inertia ixx="0.03" ixy="0" ixz="0" iyy="0.03" iyz="0" izz="0.03" />
+      </inertial>
+
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/lbr4.stl" />
+	</geometry>
+      </visual>
+
+      <collision>
+	<origin xyz="0 0 0" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/lbr4_smpl.stl"/>
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between arm_4_link and arm_5_link -->
+    <joint name="${side}_WR" type="revolute">
+      <origin xyz="0.2 0 0" rpy="${PI/2.0} ${PI/2.0-reflect*WR_offset} ${PI/2.0}" />
+      <parent link="${side}_FOREARM"/>
+      <child link="${side}_UPPER_WRIST_YAW"/>
+      <axis xyz="0 0 ${reflect*-1}" />
+      <dynamics damping="25" />
+      <limit effort="100" velocity="3.1415926" lower="${WR_min}" upper="${WR_max}" />
+    </joint>
+    <link name="${side}_UPPER_WRIST_YAW">
+      <inertial>
+	<origin xyz="0 0 0.007" rpy="0 0 0"/>
+	<mass value="2.313272"/>
+	<inertia ixx="0.03" ixy="0" ixz="0" iyy="0.03" iyz="0" izz="0.03" />
+      </inertial>
+
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0.007" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/lbr5.stl" />
+	</geometry>
+      </visual>
+
+      <collision>
+	<origin xyz="0 0 0.007" rpy="0 0 ${PI/2.0}" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/lbr5_smpl.stl"/>
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between arm_5_link and arm_6_link -->
+    <joint name="${side}_WFE" type="revolute">
+      <origin xyz="0 0 0.19" rpy="1.5708 ${reflect*-WFE_offset} ${PI/2.0}" />
+      <parent link="${side}_UPPER_WRIST_YAW"/>
+      <child link="${side}_UPPER_WRIST_PITCH"/>
+      <axis xyz="0 0 ${reflect*-1}" />
+      <dynamics damping="25" />
+      <limit effort="30" velocity="1.9634" lower="${WFE_min}" upper="${WFE_max}" />
+    </joint>
+
+    <link name="${side}_UPPER_WRIST_PITCH">
+      <inertial>
+	<origin xyz="0 0 -0.046" rpy="0 0 0"/>
+	<mass value="2.057856"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 -0.046" rpy="0 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/lbr6.stl" />
+	</geometry>
+      </visual>
+
+      <collision>
+	<origin xyz="0 0 -0.046" rpy="0 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/lbr6_smpl.stl"/>
+	</geometry>
+      </collision>
+    </link>
+
+    <!-- joint between arm_6_link and arm_7_link -->
+    <joint name="${side}_WAA" type="revolute">
+      <origin xyz="0 0.048 0" rpy="-${PI/2.0} ${-PI/2.0-reflect*WAA_offset + lrOffset*PI} 0" />
+      <parent link="${side}_UPPER_WRIST_PITCH"/>
+      <child link="${side}_LOWER_WRIST"/>
+      <axis xyz="0 0 ${reflect*-1}" />
+      <dynamics damping="25" />
+      <limit effort="30" velocity="1.9634" lower="${WAA_min}" upper="${WAA_max}" />
+    </joint>
+
+    <link name="${side}_LOWER_WRIST">
+      <inertial>
+	<origin xyz="0 0 0.009" rpy="0 0 0"/>
+	<mass value="1.120198"/>
+	<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+
+      <visual>
+	<material name="DarpaGrey" />
+	<origin xyz="0 0 0.009" rpy="0 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/lbr7.stl" />
+	</geometry>
+      </visual>
+
+      <collision>
+	<origin xyz="0 0 0.009" rpy="0 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/lbr7_smpl.stl"/>
+	</geometry>
+      </collision>
+    </link>
+
+    <joint name="${side}_Arm_PalmBlueComponentJoint" type="fixed">
+      <parent link="${side}_LOWER_WRIST"/>
+      <child link="${side}_ARM_PALM"/>
+      <origin xyz="0 0 0.03" rpy="0 0 ${PI}"/>
+    </joint>
+
+    <link name="${side}_ARM_PALM" >
+      <inertial>
+	<origin xyz="0 0 0.006" />
+	<mass value="0.00000001" />
+	<inertia  ixx="0.00000001" ixy="0.00000001"  ixz="-0.00000001"
+		  iyy="0.00000001"  iyz="-0.00000001"
+		  izz="0.00000001" />
+      </inertial>
+      <visual>
+	<material name="DarpaGrey" />
+	<material name="DarpaBlue" />
+	<origin xyz="0 0 0.006" rpy="${PI/2.0} 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/wamLowerWristFTPalmLink7.stl"/>
+	</geometry>
+      </visual>
+      <collision>
+	<origin xyz="0 0 0.006" rpy="${PI/2.0} 0 0" />
+	<geometry>
+	  <mesh filename="package://apollo_robot_model/meshes/collision/wamLowerWristFTPalmLink7_smpl.stl"/>
+	</geometry>
+      </collision>
+    </link>
+
+    <link name="${side}_PALM" />
+    <link name="${side}_KUKA_TOOL" />
+    <link name="${side}_FORCE_TORQUE_SENSOR" />
+
+    <joint name="${side}_Arm_ForceTorqueJoint" type="fixed">
+      <parent link="${side}_ARM_PALM"/>
+      <child link="${side}_FORCE_TORQUE_SENSOR"/>
+      <origin xyz="0 0 0.051" rpy="0 0 ${PI/2.0}"/><!-- 0.0131834 = .0059834 from wrist to f-t + .0072 from ft to sensor origin-->
+    </joint>
+    
+    <joint name="${side}_Arm_PalmJoint" type="fixed">
+      <parent link="${side}_ARM_PALM"/>
+      <child link="${side}_PALM"/>
+      <origin xyz="0 0 0.108" rpy="0 0 ${PI}"/>
+    </joint>
+
+    <joint name="${side}_Arm_ToolJoint" type="fixed">
+      <parent link="${side}_ARM_PALM"/>
+      <child link="${side}_KUKA_TOOL"/>
+      <origin xyz="0 0 0" rpy="0 0 ${PI/2.0}"/>
+    </joint>
+
+    <xacro:barrett_hand side="${side}" />
+
+  </xacro:macro>
+
+</robot>
