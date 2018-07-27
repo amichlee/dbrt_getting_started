@@ -1,11 +1,11 @@
 <robot name="apollo_robot"
        xmlns:xacro="http://www.ros.org/wiki/xacro"
        xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller">
-  <xacro:arg name="material_color" />
+  <xacro:arg name="material_color" default='0.0 0.5 0.5 1.0'/>
 
-  <include filename="$(find apollo_robot_model)/models/common.urdf.xacro"/>
-  <include filename="$(find apollo_robot_model)/models/kuka.urdf.xacro"/>	
-  <include filename="$(find apollo_robot_model)/models/head.urdf.xacro"/>	
+  <xacro:include filename="$(find apollo_robot_model)/models/common.urdf.xacro"/>
+  <xacro:include filename="$(find apollo_robot_model)/models/kuka.urdf.xacro"/>	
+  <xacro:include filename="$(find apollo_robot_model)/models/head.urdf.xacro"/>	
 
 
   <material name="DarpaGrey">
@@ -37,8 +37,10 @@
       </geometry>
     </collision>
   </link>
+  <!--
   <xacro:gazeboReference name="BASE" material="PR2/Grey2" />
-  
+  -->
+
   <joint name="fixedJoint" type="fixed">
     <parent link="ORIG"/>
     <child link="BASE"/>

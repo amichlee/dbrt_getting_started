@@ -2,7 +2,7 @@
 <robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
        xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
-       xmlns:xacro="http://ros.org/wiki/xacro">
+       xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:include filename="$(find apollo_robot_model)/models/common.urdf.xacro"/>
   <xacro:include filename="$(find apollo_robot_model)/models/sensorsValues.urdf.xacro"/>
@@ -60,7 +60,7 @@
 
     <!-- joint between {parent} and head cervical 1-->
     <joint name="B_NECK" type="fixed" >
-      <insert_block name="origin" />
+      <xacro:insert_block name="origin" />
       <parent link="${parent}" />
       <child link="B_NECK" />
     </joint>

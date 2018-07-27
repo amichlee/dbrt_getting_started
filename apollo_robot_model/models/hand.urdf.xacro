@@ -55,8 +55,10 @@
 		<kd  value="1.0" />
             </collision>
         </link>
+	<!--
         <xacro:gazeboReference name="${side}_HAND_${number}_FINGER_KNUCKLE_2" material="PR2/Grey2" />
         <xacro:control topicName="${side}_Arm_${number}_Finger_KnuckleTwo" name="DarmSim_${side}Arm_BHand_Finger${number}KnuckleTwo" linkName="${side}_HAND_${number}_FINGER_KNUCKLE_2" jointName="${side}_Arm_${number}_Finger_KnuckleTwoJoint" />
+	-->
 
         <link name="${side}_HAND_${number}_FINGER_KNUCKLE_3">
             <visual>
@@ -85,8 +87,10 @@
 	    <kd  value="1.0" />
             </collision>
         </link>
+	<!--
         <xacro:gazeboReference name="${side}_HAND_${number}_FINGER_KNUCKLE_3" material="PR2/Grey2" />
         <xacro:control topicName="${side}_Arm_${number}_Finger_KnuckleThree" name="DarmSim_${side}Arm_BHand_Finger${number}KnuckleThree" linkName="${side}_HAND_${number}_FINGER_KNUCKLE_3" jointName="${side}_Arm_${number}_Finger_KnuckleThreeJoint" />
+	-->
 
         <link name="${side}_HAND_${number}_FINGER_TIP"/>
 
@@ -147,8 +151,10 @@
         </geometry>
       </collision>
     </link>
+    <!--
     <xacro:gazeboReference name="${side}_HAND_L_FINGER_KNUCKLE_1" material="PR2/Grey2" />
     <xacro:control topicName="${side}_Arm_FingerOne_KnuckleOne" name="DarmSim_${side}Arm_BHand_FingerOneKnuckleOne" linkName="${side}_HAND_L_FINGER_KNUCKLE_1" jointName="${side}_Arm_FingerOne_KnuckleOneJoint" />
+    -->
 
     <xacro:fingers side="${side}" parent="${side}_HAND_L_FINGER_KNUCKLE_1" number="L" xyz=".05 0 0.02140" rpy="-${0.5 * PI} -0.0429350996 0"/>
 
@@ -175,8 +181,10 @@
         </geometry>
         </collision>
     </link>
+    <!--
     <xacro:gazeboReference name="${side}_HAND_R_FINGER_KNUCKLE_1" material="PR2/Grey2" />
     <xacro:control topicName="${side}_Arm_FingerTwo_KnuckleOne" name="DarmSim_${side}Arm_BHand_FingerTwoKnuckleOne" linkName="${side}_HAND_R_FINGER_KNUCKLE_1" jointName="${side}_Arm_FingerTwo_KnuckleOneJoint" />
+    -->
 
     <xacro:fingers side="${side}" parent="${side}_HAND_R_FINGER_KNUCKLE_1" number="R" xyz=".05 0 0.02140" rpy="-${0.5 * PI} -0.0429350996 0"/>
 
